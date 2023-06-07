@@ -11,21 +11,28 @@ from tkinter import ttk
 
 load_dotenv()
 
+# Specify OpenAI API key
 openai.api_key = os.environ["API_KEY"]
 
+# Specify the output folder path
+output_folder = "output"
+
 def generate_flashcards(input_text):
+
+    #GPT Prompt
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": f"Create anki flashcards for the following Spanish words, only one output per word.: {input_text}. The output format must be: word in spanish;phrase in spanish;word in english;translated phrase. Example: hola;hola, que tal;hello;hello how are you doing"}
     ]
 
-        # Update the loading label
+    # Update the loading label
     loading_label.config(text="Generating flashcards...")
 
     # Start the progress bar animation
     progress_bar.start()
     window.update()
 
+    #GPT settings
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages,
@@ -34,18 +41,21 @@ def generate_flashcards(input_text):
     )
 
     generated_flashcards = response["choices"][0]["message"]["content"]
-    with open("flashcards.txt", "w", encoding="utf-8") as f:
+
+    # Specify the file path in the output folder
+    file_path = os.path.join(output_folder, "flashcards.txt")
+    with open(file_path, "w", encoding="utf-8") as f:
         f.write(generated_flashcards)
 
     # Stop the progress bar animation
     progress_bar.stop()
 
     # Update the loading label
-    loading_label.config(text="Flashcards generated! Saved to 'flashcards.txt'")
+    loading_label.config(text="Flashcards generated! Saved to 'output/flashcards.txt'")
     window.update()
 
     # Open the flashcards.txt file
-    subprocess.Popen(["notepad.exe", "flashcards.txt"])
+    subprocess.Popen(["notepad.exe", file_path])
 
     # Re-enable the button
     button.config(state=tk.NORMAL)
