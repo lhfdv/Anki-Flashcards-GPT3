@@ -1,73 +1,25 @@
 import os
 import subprocess
 import threading
-
-from dotenv import load_dotenv
-import clipboard
 import openai
-
+from dotenv import load_dotenv
 import tkinter as tk
 from tkinter import ttk
+from flashcard_generator import generate_flashcards
 
 load_dotenv()
 
 # Specify OpenAI API key
 openai.api_key = os.environ["API_KEY"]
 
-# Specify the output folder path
-output_folder = "output"
-
-def generate_flashcards(input_text):
-
-    #GPT Prompt
-    messages = [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"Create anki flashcards for the following Spanish words, only one output per word.: {input_text}. The output format must be: word in spanish;phrase in spanish;word in english;translated phrase. Example: hola;hola, que tal;hello;hello how are you doing"}
-    ]
-
-    # Update the loading label
-    loading_label.config(text="Generating flashcards...")
-
-    # Start the progress bar animation
-    progress_bar.start()
-    window.update()
-
-    #GPT settings
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        temperature=0.7,
-        max_tokens=2000
-    )
-
-    generated_flashcards = response["choices"][0]["message"]["content"]
-
-    # Specify the file path in the output folder
-    file_path = os.path.join(output_folder, "flashcards.txt")
-    with open(file_path, "w", encoding="utf-8") as f:
-        f.write(generated_flashcards)
-
-    # Stop the progress bar animation
-    progress_bar.stop()
-
-    # Update the loading label
-    loading_label.config(text="Flashcards generated! Saved to 'output/flashcards.txt'")
-    window.update()
-
-    # Open the flashcards.txt file
-    subprocess.Popen(["notepad.exe", file_path])
-
-    # Re-enable the button
-    button.config(state=tk.NORMAL)
-
 def button_click():
     input_text = entry.get()
 
     # Disable the button while generating flashcards
-    button.config(state=tk.DISABLED)
+    window.button.config(state=tk.DISABLED)
 
     # Create a thread for generating flashcards
-    thread = threading.Thread(target=generate_flashcards, args=(input_text,))
+    thread = threading.Thread(target=generate_flashcards, args=(input_text, window.loading_label, window.button))
     thread.start()
 
 # Create the main window
@@ -88,15 +40,17 @@ entry = tk.Entry(window)
 entry.pack()
 
 # Create a button
-button = tk.Button(window, text="Generate Flashcards", command=button_click)
-button.pack()
+window.button = tk.Button(window, text="Generate Flashcards", command=button_click)
+window.button.pack()
 
 # Create a label for the loading message
 loading_label = tk.Label(window, text="")
+window.loading_label = loading_label  # Assign loading_label to window.loading_label
 loading_label.pack()
 
 # Create a progress bar
 progress_bar = ttk.Progressbar(window, mode="indeterminate")
+window.progress_bar = progress_bar  # Assign progress_bar to window.progress_bar
 progress_bar.pack(pady=10)
 
 # Start the main event loop
