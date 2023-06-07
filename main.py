@@ -1,11 +1,17 @@
+import os
+import subprocess
+import threading
+
+from dotenv import load_dotenv
+import clipboard
+import openai
+
 import tkinter as tk
 from tkinter import ttk
-import openai
-import clipboard
-import threading
-import subprocess
 
-openai.api_key = "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"
+load_dotenv()
+
+openai.api_key = os.environ["API_KEY"]
 
 def generate_flashcards(input_text):
     messages = [
@@ -18,7 +24,6 @@ def generate_flashcards(input_text):
 
     # Start the progress bar animation
     progress_bar.start()
-
     window.update()
 
     response = openai.ChatCompletion.create(
