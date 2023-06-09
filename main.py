@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import filedialog
 from flashcard_generator import generate_flashcards
 
 load_dotenv()
@@ -15,15 +16,19 @@ load_dotenv()
 # Specify OpenAI API key
 openai.api_key = os.environ["API_KEY"]
 
+# Variables
+default_content = "Example: word1, word2, word3..."
+output_folder = "output"
+
 def clear_default_content(event):
     # Default content when the user starts typing
     current_content = entry.get("1.0", tk.END).strip()
-    if current_content == "word1, word2, word3, word4":
+    if current_content == default_content:
         entry.delete("1.0", tk.END)
 
 def button_click():
     input_text = entry.get("1.0", tk.END).strip()  # Retrieve the text from line 1 to the end
-    language = language_combobox.get() # Get the desired language
+    language = language_combobox.get() # Get the desired output language
     input_language = input_language_combobox.get() # Get the input language
 
     if not input_text:
@@ -41,6 +46,16 @@ def about():
     about_text = "Flashcard Generator\nVersion 0.1.0\nGitHub: https://github.com/lhfdv"
     messagebox.showinfo("About", about_text)
 
+def open_output_folder():
+    folder_path = os.path.abspath(output_folder)
+    subprocess.Popen(["explorer", folder_path])
+
+def change_output_folder():
+    folder_path = filedialog.askdirectory(initialdir=os.getcwd(), title="Select Output Folder")
+    if folder_path:
+        global OUTPUT_FOLDER
+        OUTPUT_FOLDER = folder_path
+
 def close():
     window.destroy()
 
@@ -51,6 +66,12 @@ window.title("Flashcard Generator")
 # Menu
 menu = tk.Menu(window)
 window.config(menu=menu)
+
+# "File"
+file_menu = tk.Menu(menu)
+menu.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Output Folder", command=open_output_folder)
+file_menu.add_command(label="Change Output Folder", command=change_output_folder)
 
 # "About"
 about_menu = tk.Menu(menu)
@@ -72,7 +93,7 @@ label.grid(row=0, column=0, columnspan=2, pady=10)
 # Input field for words
 entry = tk.Text(window, height=5)
 entry.grid(row=1, column=0, columnspan=2, pady=5)
-entry.insert("1.0", "word1, word2, word3, word4")  # Set the default content
+entry.insert("1.0", default_content)  # Set the default content
 entry.bind("<FocusIn>", clear_default_content)
 
 # Label for the language selection
