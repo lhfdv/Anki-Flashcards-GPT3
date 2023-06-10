@@ -4,8 +4,8 @@ Used this as reference: https://betterprogramming.pub/automating-anki-flashcards
 
 Planning to add:
 - More languages support (Japanese doesn't seem to be working properly)
-- Change API key
-- Change output folder
+- ~~Change API key~~
+- ~~Change output folder~~
 - Change model
 - Better prompt
 - Anki Implementation
