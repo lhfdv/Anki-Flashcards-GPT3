@@ -6,6 +6,6 @@ Used this as reference: https://betterprogramming.pub/automating-anki-flashcards
 - More languages support (Japanese doesn't seem to be working properly)
 - ~~Change API key~~
 - ~~Change output folder~~
-- Change model
+- ~~Change model~~
 - Better prompt
 - Some sort of Anki implementation
