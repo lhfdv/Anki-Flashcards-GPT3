@@ -19,6 +19,7 @@ default_content = "Example: word1, word2, word3..."
 output_folder = "output"
 api_key = os.environ.get("API_KEY", "")
 open_folder_after_generation = True
+gpt_model = "gpt-3.5-turbo" 
 
 def clear_default_content(event):
     current_content = entry.get("1.0", tk.END).strip()
@@ -27,20 +28,18 @@ def clear_default_content(event):
 
 def button_click():
     input_text = entry.get("1.0", tk.END).strip()
-    language = language_combobox.get()  # Get the desired output language
-    input_language = input_language_combobox.get()  # Get the input language
+    language = language_combobox.get()  
+    input_language = input_language_combobox.get() 
 
     if not input_text:
         tk.messagebox.showerror("Error", "No input")
         return
 
-    # Disable the button while generating flashcards
     window.button.config(state=tk.DISABLED)
 
-    # Create a thread for generating flashcards
     thread = threading.Thread(
         target=generate_flashcards,
-        args=(input_text, language, input_language, window.loading_label, window.button, window.progress_bar, output_folder),
+        args=(input_text, language, input_language, window.loading_label, window.button, window.progress_bar, output_folder, gpt_model),
     )
     thread.start()
 
@@ -70,6 +69,12 @@ def change_api_key():
         os.environ["API_KEY"] = api_key
         openai.api_key = api_key
 
+def change_gpt_model():
+    global gpt_model
+    gpt_model = simpledialog.askstring("GPT Model", "Enter the GPT model name (e.g., gpt-4.0):")
+    if gpt_model:
+        messagebox.showinfo("GPT Model", f"Selected GPT Model: {gpt_model}")
+
 def close():
     window.destroy()
 
@@ -94,6 +99,7 @@ menu.add_cascade(label="Options", menu=options_menu)
 options_menu.add_command(label="Change Output Folder", command=change_output_folder)
 options_menu.add_command(label="Open Folder After Generation", command=toggle_open_folder_option)
 options_menu.add_command(label="Change API Key", command=change_api_key)
+options_menu.add_command(label="Change GPT Model", command=change_gpt_model)
 
 # "About"
 about_menu = tk.Menu(menu, tearoff=0)
@@ -118,23 +124,21 @@ entry.grid(row=1, column=0, columnspan=2, pady=5)
 entry.insert("1.0", default_content)
 entry.bind("<FocusIn>", clear_default_content)
 
-# Label for the language selection
+# Label for the language selection (Input)
 input_language_label = tk.Label(window, text="Select input language:")
 input_language_label.grid(row=2, column=0, pady=5)
 
-# Combobox for language selection with default options
-input_language_combobox = ttk.Combobox(window, values=["Brazilian Portuguese", "English"])
-input_language_combobox.current(0)
-input_language_combobox.grid(row=3, column=0, pady=5)
+language_combobox = ttk.Combobox(window, values=["Spanish", "French", "Italian"])
+language_combobox.current(0)
+language_combobox.grid(row=3, column=0, pady=5)
 
-# Label for the language selection
+# Label for the language selection (Output)
 language_label = tk.Label(window, text="Select output language:")
 language_label.grid(row=2, column=1, pady=5)
 
-# Combobox for language selection with default options
-language_combobox = ttk.Combobox(window, values=["Spanish", "French", "Italian"])
-language_combobox.current(0)
-language_combobox.grid(row=3, column=1, pady=5)
+input_language_combobox = ttk.Combobox(window, values=["Brazilian Portuguese", "English"])
+input_language_combobox.current(0)
+input_language_combobox.grid(row=3, column=1, pady=5)
 
 # Label for the loading message
 loading_label = tk.Label(window, text="")

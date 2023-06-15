@@ -4,22 +4,21 @@ import subprocess
 import time
 from tkinter import messagebox
 
-# Specify the output folder path
 output_folder = "output"
+model = "gpt-3.5-turbo"
 
-def generate_flashcards(input_text, language, input_language, loading_label, button, progress_bar, output_folder):
+def generate_flashcards(input_text, language, input_language, loading_label, button, progress_bar, output_folder, model):
     # GPT Prompt
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": f"Create anki flashcards for the following {language} words in {input_language}, only one output per word is allowed.: {input_text}. The output format must be: word in spanish;phrase in spanish;word in english;translated phrase. Example: hola;hola, que tal;hello;hello how are you doing"}
     ]
 
-    # Update the loading label
     loading_label.config(text="Generating flashcards...")
 
     # GPT settings
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model=model,
         messages=messages,
         temperature=0.7,
         max_tokens=2000
@@ -30,7 +29,6 @@ def generate_flashcards(input_text, language, input_language, loading_label, but
     timestamp = time.strftime("%Y%m%d%H%M%S")
     file_name = f"flashcards_{timestamp}_{language}.txt"
 
-    # Specify the file path in the output folder
     file_path = os.path.join(output_folder, file_name)
 
     try:
