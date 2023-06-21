@@ -128,7 +128,7 @@ entry.bind("<FocusIn>", clear_default_content)
 input_language_label = tk.Label(window, text="Select input language:")
 input_language_label.grid(row=2, column=0, pady=5)
 
-language_combobox = ttk.Combobox(window, values=["Spanish", "French", "Italian"])
+language_combobox = ttk.Combobox(window, values=["Spanish", "French", "Italian", "Japanese"])
 language_combobox.current(0)
 language_combobox.grid(row=3, column=0, pady=5)
 

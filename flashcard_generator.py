@@ -11,7 +11,7 @@ def generate_flashcards(input_text, language, input_language, loading_label, but
     # GPT Prompt
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"Create anki flashcards for the following {language} words in {input_language}, only one output per word is allowed.: {input_text}. The output format must be: word in spanish;phrase in spanish;word in english;translated phrase. Example: hola;hola, que tal;hello;hello how are you doing"}
+        {"role": "user", "content": f"Create anki flashcards for the following {language} words in {input_language}, only one output per word is allowed.: {input_text}. The output format must be: word in spanish;phrase in spanish;reading in spanish;word in english;translated phrase. Example: hola;hola, que tal;hola;hello;hello how are you doing"}
     ]
 
     loading_label.config(text="Generating flashcards...")
